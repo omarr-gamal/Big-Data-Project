@@ -1,25 +1,42 @@
-data <- read.csv("melb_data.csv")
+houses <- read.csv("melb_data.csv")
 
-str(data)
+str(houses)
 
-summary(data)
+summary(houses)
 
-hist(data$Price, main = "Distribution of Price", xlab = "Price ($)", ylab = "Frequency")
+colSums(is.na(houses))
 
-plot(data$Rooms, data$Price, main = "Price vs Number of Rooms", xlab = "Number of Rooms", ylab = "Price ($)")
+houses <- houses[complete.cases(houses$Car), ]
 
-correlation_matrix <- cor(data[, c("Price", "Rooms", "Bedroom2", "Bathroom", "Landsize")])
-print(correlation_matrix)
-# Draw Correlation Matrix as Heatmap
-heatmap(correlation_matrix, 
-        symm = TRUE,             # Treat the correlation matrix as symmetric
-        main = "Correlation Matrix", 
-        xlab = "Variables", 
-        ylab = "Variables", 
-        col = colorRampPalette(c("blue", "white", "red"))(100),  # Define color palette
-        margins = c(10, 10))    # Adjust margins for better visualization
+houses <- subset(houses, select = -c(Address, SellerG, Date, Postcode, CouncilArea))
 
-barplot(table(data$Type), main = "Frequency of Property Types", xlab = "Property Type", ylab = "Frequency")
+houses <- houses[, !names(houses) %in% "YearBuilt"]
 
-colSums(is.na(data))
+numeric_columns <- c("Rooms", "Bedroom2", "Bathroom", "Car", "Landsize", "Distance", "Price")
+
+remove_outliers <- function(df, cols) {
+  for (col in cols) {
+    q1 <- quantile(df[[col]], 0.25)
+    q3 <- quantile(df[[col]], 0.75)
+    iqr <- q3 - q1
+    lower_bound <- q1 - 2 * iqr
+    upper_bound <- q3 + 2 * iqr
+    df <- df[df[[col]] >= lower_bound & df[[col]] <= upper_bound, ]
+  }
+  return(df)
+}
+
+houses_clean <- remove_outliers(houses, numeric_columns)
+
+
+unique_rooms <- unique(houses_clean$Rooms)
+for (room_count in unique_rooms) {
+  # Calculate the median Building Area for houses with the current number of rooms
+  median_area <- median(houses_clean$BuildingArea[houses_clean$Rooms == room_count], na.rm = TRUE)
+
+  # Replace missing Building Area values with the median for the corresponding number of rooms
+  houses_clean$BuildingArea[houses_clean$Rooms == room_count & is.na(houses_clean$BuildingArea)] <- median_area
+}
+
+
 
