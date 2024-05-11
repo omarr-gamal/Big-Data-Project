@@ -1,3 +1,6 @@
+install.packages("ggplot2")
+library(ggplot2)
+
 houses <- read.csv("melb_data_cleaned.csv")
 
 run_linear_regression <- function(data, target, predictors, test_size = 0.2, seed = NULL) {
@@ -90,3 +93,52 @@ result <- run_linear_regression(
   test_size = 0.2, 
   seed = 123
 )
+
+# ------------------------------------------------------------------------------
+# - Visualizing The Model
+# ------------------------------------------------------------------------------
+
+# Make predictions on the entire dataset
+houses$Predicted_Price <- predict(model, newdata = houses)
+
+
+# Scatterplot of Predicted vs. Actual Prices with perfect fit line
+plot(
+  houses$Price, houses$Predicted_Price, 
+  xlab = "Actual Price", ylab = "Predicted Price",
+  pch = 16, lwd = 2, cex = 0.5
+)
+abline(0, 1, col = "red", lwd = 2)
+
+# --------------------------------------------------------------------
+
+# Residual Plot
+residuals <- houses$Price - houses$Predicted_Price
+plot(
+  houses$Predicted_Price, residuals, 
+  xlab = "Predicted Price", ylab = "Residuals",
+  pch = 16, lwd = 2, cex = 0.5
+)
+# Horizontal line at y = 0 resembling a perfect model.
+abline(h = 0, col = "red", lwd = 2)
+
+# --------------------------------------------------------------------
+
+# distribution of Price and Predicted Price
+hist(
+  houses$Price, 
+  col = rgb(1, 1, 1, alpha = 0.5), 
+  xlab = "Price", main = "Histogram of Price and Predicted Price",
+  xlim = c(-1000000, 3000000), ylim = c(0, 3200)
+)
+hist(houses$Predicted_Price, col = rgb(0, 0, 0, alpha = 0.5), add = TRUE)
+hist(residuals, col = rgb(1, 0, 0, alpha = 0.2), add = TRUE)
+
+legend("topright", legend = c("Price", "Predicted Price", "Error"), fill = c("white", "black", "pink"))
+
+
+
+
+
+
+
