@@ -1,19 +1,35 @@
+# ------------------------------------------------------------------------------
+# - Data Loading and Inspection
+# ------------------------------------------------------------------------------
+
 houses <- read.csv("melb_data.csv")
 
+# Display the structure of the dataset
 str(houses)
 
+# Display summary statistics of the dataset
 summary(houses)
 
+# Check for missing values in each column
 colSums(is.na(houses))
 
+# ------------------------------------------------------------------------------
+# - Data Cleaning
+# ------------------------------------------------------------------------------
+
+# Dropping rows with missing 'Car' values
 houses <- houses[complete.cases(houses$Car), ]
 
-houses <- subset(houses, select = -c(Address, SellerG, Date, Postcode, CouncilArea))
+# Dropping unnecessary columns
+houses <- subset(houses, select = -c(Address, SellerG, Date, Postcode, CouncilArea, YearBuilt))
 
-houses <- houses[, !names(houses) %in% "YearBuilt"]
+# ------------------------------------------------------------------------------
+# - Outlier Removal
+# ------------------------------------------------------------------------------
 
 numeric_columns <- c("Rooms", "Bedroom2", "Bathroom", "Car", "Landsize", "Distance", "Price")
 
+# Function to remove outliers using the IQR technique.
 remove_outliers <- function(df, cols) {
   for (col in cols) {
     q1 <- quantile(df[[col]], 0.25)
@@ -26,17 +42,22 @@ remove_outliers <- function(df, cols) {
   return(df)
 }
 
+# Remove outliers from numeric columns
 houses_clean <- remove_outliers(houses, numeric_columns)
 
+# ------------------------------------------------------------------------------
+# - Missing Value Imputation
+# ------------------------------------------------------------------------------
 
+# Impute missing Building Area values based on the median for each number of rooms
 unique_rooms <- unique(houses_clean$Rooms)
 for (room_count in unique_rooms) {
-  # Calculate the median Building Area for houses with the current number of rooms
   median_area <- median(houses_clean$BuildingArea[houses_clean$Rooms == room_count], na.rm = TRUE)
-
-  # Replace missing Building Area values with the median for the corresponding number of rooms
   houses_clean$BuildingArea[houses_clean$Rooms == room_count & is.na(houses_clean$BuildingArea)] <- median_area
 }
 
+# ------------------------------------------------------------------------------
+# - Writing Cleaned Data
+# ------------------------------------------------------------------------------
 
-
+write.csv(houses_clean, file = "melb_data_cleaned.csv", row.names = FALSE)
