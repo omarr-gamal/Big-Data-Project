@@ -127,18 +127,36 @@ abline(h = 0, col = "red", lwd = 2)
 # distribution of Price and Predicted Price
 hist(
   houses$Price, 
-  col = rgb(1, 1, 1, alpha = 0.5), 
+  col = rgb(1, 1, 1, alpha = 0.5), breaks = 100,
   xlab = "Price", main = "Histogram of Price and Predicted Price",
-  xlim = c(-1000000, 3000000), ylim = c(0, 3200)
+  xlim = c(-1000000, 3000000), ylim = c(0, 400)
 )
-hist(houses$Predicted_Price, col = rgb(0, 0, 0, alpha = 0.5), add = TRUE)
-hist(residuals, col = rgb(1, 0, 0, alpha = 0.2), add = TRUE)
+hist(houses$Predicted_Price, col = rgb(0, 0, 0, alpha = 0.5), breaks = 100, add = TRUE)
+hist(residuals, col = rgb(1, 0, 0, alpha = 0.2), breaks = 100, add = TRUE)
 
 legend("topright", legend = c("Price", "Predicted Price", "Error"), fill = c("white", "black", "pink"))
 
+# --------------------------------------------------------------------
 
 
+# Calculate density for each value of Rooms
+density_data <- lapply(unique(houses$Rooms), function(room){
+  data <- subset(houses, Rooms == room)
+  density_values <- density(data$Price)
+  data.frame(Rooms = room, Price = density_values$x, Density = density_values$y)
+})
+
+density_data <- do.call(rbind, density_data)
+
+# Create ggplot
+ggplot(data = density_data, aes(x = Price, y = Density, color = as.factor(Rooms))) +
+  geom_line() +
+  labs(x = "Price", y = "Density", title = "Density of Price for Each Value of Rooms") +
+  theme_minimal()
 
 
-
+pairs(houses[c("Rooms", "Bedroom2", "Bathroom", "Car", "Landsize", 
+               "Distance", "h", "t", "u", "EMetropolitan", 
+               "EVictoria", "NMetropolitan", "NVictoria", "SEMetropolitan", 
+               "SMetropolitan", "WMetropolitan")])
 
