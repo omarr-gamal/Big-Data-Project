@@ -57,7 +57,7 @@ densityplot(~ Price, groups = Type, data = houses, auto.key = TRUE,
 
 #Hypothesis 3 : The Effect of the sell method and the price.
 # Null hypothesis: The mean price is the same across all categories of Sale Method. The Sale Method of house has no effect on the price.
-# Alternate hypothesis: The mean price varies between at least two of the categories of sale methods. The sale method of house has an effect on the price.
+# Alternate hypothesis: The mean price varies between the categories of sale methods. The sale method of house has an effect on the price.
 result_method <- aov(Price ~ Method, data = houses)
 summary(result_method)
 TukeyHSD(result_method)
