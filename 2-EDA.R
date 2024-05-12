@@ -142,4 +142,3 @@ boxplot(Price ~ Bedroom2, data = houses, main = "Price by Number of Bedrooms", x
 
 # Histogram of Land Size
 hist(houses$Landsize, main = "Distribution of Land Size", xlab = "Land Size", col = "skyblue")
-
