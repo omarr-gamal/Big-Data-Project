@@ -425,6 +425,11 @@ write.csv(houses_clean, file = "melb_data_cleaned.csv", row.names = FALSE)
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 
+# Reset graphical parameters to default
+graphics.off()  # Close all graphical devices
+par(NULL)       # Reset par() to default values
+
+
 houses <- read.csv("melb_data_cleaned.csv")
 
 run_linear_regression <- function(data, target, predictors, test_size = 0.2, seed = NULL) {
@@ -702,6 +707,4 @@ densityplot(~ Price, groups = Method, data = houses, auto.key = TRUE,
 #    - VB-S (p adj = 0.9922909): Accept the null hypothesis. No significant difference between vendor bids and sold properties.
 #    - VB-SA (p adj = 0.9574013): Accept the null hypothesis. No significant difference between vendor bids and properties sold after auction.
 #    These outcomes suggest that, in some scenarios, the conditions under which sales occur do not significantly alter the outcome metrics.
-
-
 
