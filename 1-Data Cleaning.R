@@ -9,6 +9,7 @@ str(houses)
 
 # Display summary statistics of the dataset
 summary(houses)
+head(houses)
 
 # Check for missing values in each column
 colSums(is.na(houses))
@@ -55,6 +56,8 @@ for (room_count in unique_rooms) {
   median_area <- median(houses_clean$BuildingArea[houses_clean$Rooms == room_count], na.rm = TRUE)
   houses_clean$BuildingArea[houses_clean$Rooms == room_count & is.na(houses_clean$BuildingArea)] <- median_area
 }
+
+
 
 # ------------------------------------------------------------------------------
 # - Writing Cleaned Data
