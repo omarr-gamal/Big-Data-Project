@@ -55,7 +55,7 @@ densityplot(~ Price, groups = Type, data = houses, auto.key = TRUE,
 #u-h: Houses with type u are $564,274.9 less expensive than houses with type h.
 #u-t: Houses with type u are $322,239.6 less expensive than houses with type t.
 
-#Hypothesis 3 : The Effect of Distance from CBD on Number of Rooms
+#Hypothesis 3 : The Effect of the sell method and the price.
 # Null hypothesis: The mean price is the same across all categories of Sale Method. The Sale Method of house has no effect on the price.
 # Alternate hypothesis: The mean price varies between at least two of the categories of sale methods. The sale method of house has an effect on the price.
 result_method <- aov(Price ~ Method, data = houses)
